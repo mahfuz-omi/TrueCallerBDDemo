@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_user_data"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.omi.truecallerbddemo.UserDataActivity">
+
+    <EditText
+        android:id="@+id/fullNameEditText"
+        android:hint="Full Name"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <info.hoang8f.widget.FButton
+        android:layout_marginTop="20dp"
+        app:buttonColor="@color/fbutton_color_belize_hole"
+        android:id="@+id/requestLogin"
+        android:onClick="login"
+        android:text="Create Account"
+        android:layout_below="@id/fullNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/errorText"
+        android:gravity="center"
+        android:text=""
+        android:textColor="#e30000"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/requestLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
