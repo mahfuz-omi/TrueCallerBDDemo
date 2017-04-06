@@ -27,15 +27,16 @@ import android.widget.Toast;
 import com.example.omi.truecallerbddemo.application.TrueCallerBDApplication;
 import com.example.omi.truecallerbddemo.receiver.IncomingCallReceiver;
 import com.example.omi.truecallerbddemo.service.ContactsSendService;
+import com.example.omi.truecallerbddemo.util.CallerNameTrackerAppUtility;
 
 public class MainActivity extends AppCompatActivity {
 
     private int READ_PHONE_STATE_PERMISSION_CODE = 1;
     private int OVERLAY_PERMISSION_REQ_CODE = 2;
 
-    boolean isPhoneStateReadGranted,isContactReadGranted,isDrawingGranted;
+    boolean isPhoneStateReadGranted, isContactReadGranted, isDrawingGranted;
 
-    Button startServiceButton,endServiceButton;
+    Button startServiceButton, endServiceButton;
 
     public final static String PREFERENCE_FIRST_RUN = "isFirstRun";
     public final static String PREFERENCE_IS_STARTED = "isStarted";
@@ -46,9 +47,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(!((TrueCallerBDApplication)getApplication()).isLoggedIn())
-        {
-            Intent intent = new Intent(this,LoginActivity.class);
+        if (!((TrueCallerBDApplication) getApplication()).isLoggedIn()) {
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
             return;
@@ -58,16 +58,14 @@ public class MainActivity extends AppCompatActivity {
 
         System.out.println(Build.MANUFACTURER);
         receiverComponent = new ComponentName(this, IncomingCallReceiver.class);
-        getPackageManager().setComponentEnabledSetting(receiverComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED , PackageManager.DONT_KILL_APP);
+        getPackageManager().setComponentEnabledSetting(receiverComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 
-        this.startServiceButton = (Button)findViewById(R.id.startServiceButton);
-        this.endServiceButton = (Button)findViewById(R.id.endServiceButton);
+        this.startServiceButton = (Button) findViewById(R.id.startServiceButton);
+        this.endServiceButton = (Button) findViewById(R.id.endServiceButton);
 
-        this.startServiceButton.setOnClickListener(new View.OnClickListener()
-        {
+        this.startServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 requestReadPhoneStatePermission();
             }
         });
@@ -75,9 +73,10 @@ public class MainActivity extends AppCompatActivity {
         this.endServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getPackageManager().setComponentEnabledSetting(receiverComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED , PackageManager.DONT_KILL_APP);
+                getPackageManager().setComponentEnabledSetting(receiverComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 
-                Toast.makeText(MainActivity.this, "service stopped", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "service stopped", Toast.LENGTH_SHORT).show();
+                CallerNameTrackerAppUtility.showSnackbar(MainActivity.this, R.id.drawer_layout, "service stopped");
                 endServiceButton.setEnabled(false);
                 startServiceButton.setEnabled(true);
             }
@@ -87,21 +86,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private boolean isReadPhoneStateContactDrawingAllowed()
-    {
+    private boolean isReadPhoneStateContactDrawingAllowed() {
         //Getting the permission status
         int phoneStateResult = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
         int contactResult = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
         this.isDrawingGranted = true;
-        if(Build.VERSION.SDK_INT >= 23)
-        {
+        if (Build.VERSION.SDK_INT >= 23) {
             if (!Settings.canDrawOverlays(this))
                 this.isDrawingGranted = false;
         }
 
-        if(phoneStateResult == PackageManager.PERMISSION_GRANTED)
+        if (phoneStateResult == PackageManager.PERMISSION_GRANTED)
             this.isPhoneStateReadGranted = true;
-        if(contactResult == PackageManager.PERMISSION_GRANTED)
+        if (contactResult == PackageManager.PERMISSION_GRANTED)
             this.isContactReadGranted = true;
 
         if (this.isPhoneStateReadGranted && this.isContactReadGranted && this.isDrawingGranted)
@@ -110,17 +107,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void requestReadPhoneStatePermission()
-    {
-        if(this.isDrawingGranted == false)
-        {
+    private void requestReadPhoneStatePermission() {
+        if (this.isDrawingGranted == false) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                     Uri.parse("package:" + getPackageName()));
             startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
         }
 
-        if(this.isPhoneStateReadGranted == false || this.isContactReadGranted == false)
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_PHONE_STATE,Manifest.permission.READ_CONTACTS},READ_PHONE_STATE_PERMISSION_CODE);
+        if (this.isPhoneStateReadGranted == false || this.isContactReadGranted == false)
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CONTACTS}, READ_PHONE_STATE_PERMISSION_CODE);
         else
             checkStartButton();
 
@@ -132,26 +127,23 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         //Checking the request code of our request
-        if(requestCode == READ_PHONE_STATE_PERMISSION_CODE)
-        {
+        if (requestCode == READ_PHONE_STATE_PERMISSION_CODE) {
 
             //If permission is granted
-            if(grantResults.length >0)
-            {
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            if (grantResults.length > 0) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     this.isPhoneStateReadGranted = true;
                 else
                     this.isPhoneStateReadGranted = false;
-                if(grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                if (grantResults[1] == PackageManager.PERMISSION_GRANTED)
                     this.isContactReadGranted = true;
                 else
                     this.isContactReadGranted = false;
-            }
-            else
-            {
+            } else {
 
                 this.startServiceButton.setEnabled(true);
-                Toast.makeText(this,"Oops you just denied the permissions",Toast.LENGTH_LONG).show();
+                //Toast.makeText(this,"Oops you just denied the permissions",Toast.LENGTH_LONG).show();
+                CallerNameTrackerAppUtility.showSnackbar(MainActivity.this, R.id.drawer_layout, "Oops you just denied the permissions");
             }
 
             this.checkStartButton();
@@ -160,41 +152,31 @@ public class MainActivity extends AppCompatActivity {
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         this.checkStartButton();
     }
 
 
-
-    public void checkStartButton()
-    {
-        if(isReadPhoneStateContactDrawingAllowed())
-        {
+    public void checkStartButton() {
+        if (isReadPhoneStateContactDrawingAllowed()) {
             //SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
             //boolean isStartedService = p.getBoolean(PREFERENCE_IS_STARTED, false);
             //if(isStartedService)
             //{
-                this.startServiceButton.setEnabled(false);
-                this.endServiceButton.setEnabled(true);
-                getPackageManager().setComponentEnabledSetting(receiverComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED , PackageManager.DONT_KILL_APP);
+            this.startServiceButton.setEnabled(false);
+            this.endServiceButton.setEnabled(true);
+            getPackageManager().setComponentEnabledSetting(receiverComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
             //}
 
 
-
-
             int status = getPackageManager().getComponentEnabledSetting(receiverComponent);
-            if(status == PackageManager.COMPONENT_ENABLED_STATE_ENABLED)
-            {
+            if (status == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
                 System.out.println("receiver is enabled");
-            }
-            else if(status == PackageManager.COMPONENT_ENABLED_STATE_DISABLED)
-            {
+            } else if (status == PackageManager.COMPONENT_ENABLED_STATE_DISABLED) {
                 System.out.println("receiver is disabled");
             }
 
-            if(Build.MANUFACTURER.equalsIgnoreCase("xiaomi"))
-            {
+            if (Build.MANUFACTURER.equalsIgnoreCase("xiaomi")) {
                 new AlertDialog.Builder(this)
                         .setTitle("Message")
                         .setMessage("For getting notification when call arrives, you have to autostart this application. Go to settings->permissions->autostart and then add this app to autostart")
@@ -210,18 +192,15 @@ public class MainActivity extends AppCompatActivity {
 
             SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
             boolean isFirstRun = p.getBoolean(PREFERENCE_FIRST_RUN, true);
-            if(isFirstRun)
-            {
+            if (isFirstRun) {
                 //start service
                 Intent intent = new Intent(this, ContactsSendService.class);
                 startService(intent);
             }
 
             return;
-        }
-        else
-        {
-            getPackageManager().setComponentEnabledSetting(receiverComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED , PackageManager.DONT_KILL_APP);
+        } else {
+            getPackageManager().setComponentEnabledSetting(receiverComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         }
     }
 
@@ -235,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent(this,PrivacyPolicyActivity.class);
+        Intent intent = new Intent(this, PrivacyPolicyActivity.class);
         startActivity(intent);
         return true;
 

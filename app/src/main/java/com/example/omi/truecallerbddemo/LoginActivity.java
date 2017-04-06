@@ -27,6 +27,7 @@ import com.example.omi.truecallerbddemo.constant.WebServiceURL;
 import com.example.omi.truecallerbddemo.model.CheckPhoneNoRequest;
 import com.example.omi.truecallerbddemo.model.LoginRequest;
 import com.example.omi.truecallerbddemo.model.UserCredential;
+import com.example.omi.truecallerbddemo.util.CallerNameTrackerAppUtility;
 import com.google.gson.Gson;
 
 import com.twitter.sdk.android.core.TwitterAuthConfig;
@@ -105,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (pDialog.isShowing())
                     pDialog.dismiss();
 
-                Toast.makeText(LoginActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
+                CallerNameTrackerAppUtility.showSnackbar(LoginActivity.this,R.id.loginRoot,error.toString());
 
             }
         }
@@ -152,7 +153,8 @@ public class LoginActivity extends AppCompatActivity {
 //                Toast.makeText(getApplicationContext(), "Authentication successful for "
 //                        + phoneNumber, Toast.LENGTH_LONG).show();
                 phoneNo = phoneNumber;
-                Toast.makeText(LoginActivity.this, phoneNo+"authentication success", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(LoginActivity.this, phoneNo+"authentication success", Toast.LENGTH_SHORT).show();
+                CallerNameTrackerAppUtility.showSnackbar(LoginActivity.this,R.id.loginRoot,phoneNo+" Authentication success");
 
 
                 CheckPhoneNoRequest checkPhoneNoRequestObject = new CheckPhoneNoRequest();
@@ -196,7 +198,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                             else
                             {
-                                Toast.makeText(LoginActivity.this, "Network Problem. Please Try Again Later.", Toast.LENGTH_SHORT).show();
+                                CallerNameTrackerAppUtility.showSnackbar(LoginActivity.this,R.id.loginRoot,"Network Error.Please try again later.");
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -212,8 +214,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (pDialog.isShowing())
                             pDialog.dismiss();
 
-                        Toast.makeText(LoginActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
-                        System.out.println("yyyyy");
+                        CallerNameTrackerAppUtility.showSnackbar(LoginActivity.this,R.id.loginRoot,"Network Error.Please try again later.");
 
                     }
                 }
@@ -237,7 +238,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void failure(DigitsException exception) {
                 Log.d("Digits", "Sign in with Digits failure", exception);
-                Toast.makeText(LoginActivity.this, "Authentication Failed", Toast.LENGTH_SHORT).show();
+                CallerNameTrackerAppUtility.showSnackbar(LoginActivity.this,R.id.loginRoot,phoneNo+" Authentication Failed");
             }
         });
 

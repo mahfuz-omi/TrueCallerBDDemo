@@ -23,6 +23,7 @@ import com.example.omi.truecallerbddemo.application.TrueCallerBDApplication;
 import com.example.omi.truecallerbddemo.constant.WebServiceURL;
 import com.example.omi.truecallerbddemo.model.LoginRequest;
 import com.example.omi.truecallerbddemo.model.UserCredential;
+import com.example.omi.truecallerbddemo.util.CallerNameTrackerAppUtility;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -110,7 +111,7 @@ public class UserDataActivity extends AppCompatActivity {
                 if (pDialog.isShowing())
                     pDialog.dismiss();
 
-                Toast.makeText(UserDataActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
+                CallerNameTrackerAppUtility.showSnackbar(UserDataActivity.this,R.id.userDataRoot,"Network Error.Please try again later.");
 
             }
         }
@@ -153,7 +154,7 @@ public class UserDataActivity extends AppCompatActivity {
         String fullName = fullNameEditText.getText().toString();
         if(fullName.isEmpty())
         {
-            errorTextView.setText("full name can't be empty");
+            errorTextView.setText("Full name can't be empty");
             return;
 
         }
